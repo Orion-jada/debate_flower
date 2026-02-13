@@ -7,7 +7,6 @@ import { replaceNodes } from './nodeDecorateAction';
 import { saveFlow, createFlow, listFlows, loadFlow, deleteFlowFromDb, type FlowRecord } from './flowApi';
 import { isLoggedIn, currentUser } from './auth';
 import { suppressNextUpdate, subscribeToFlow, unsubscribeFromFlow } from './flowSync';
-import { supabase } from '$lib/supabase';
 
 // ─── Local auto‑save (kept as offline fallback) ───────────────────────
 
@@ -206,26 +205,9 @@ export async function deleteCloudFlow(flowId: string) {
 		const currentId = get(currentCloudFlowId);
 		if (currentId === flowId) {
 			startNewCloudFlow();
-			replaceNodes({ root: { value: { tag: 'root' }, level: -1, parent: null, children: [] } } as Nodes);
 		}
 		refreshFlowList();
 	}
-}
-
-/**
- * Rename a cloud flow's title.
- */
-export async function renameCloudFlow(flowId: string, newTitle: string) {
-	const { error } = await supabase
-		.from('flows')
-		.update({ title: newTitle, updated_at: new Date().toISOString() })
-		.eq('id', flowId);
-
-	if (error) {
-		console.error('Error renaming flow:', error);
-		return;
-	}
-	refreshFlowList();
 }
 
 // ─── Local storage helpers (kept for backward compat) ─────────────────

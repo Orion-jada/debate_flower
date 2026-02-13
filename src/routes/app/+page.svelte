@@ -56,34 +56,39 @@
     deleteCloudFlow,
     startNewCloudFlow,
     refreshFlowList,
-    renameCloudFlow,
   } from "$lib/models/autoSave";
   import { newNodes } from "$lib/models/store";
+  import { saveFlow as saveFlowApi } from "$lib/models/flowApi";
 
-  // Cloud flow rename/delete state
   let editingFlowId: string | null = null;
-  let editingTitle = "";
+  let editingFlowTitle = "";
 
-  function startRenaming(flowId: string, currentTitle: string) {
+  function startEditingFlow(flowId: string, currentTitle: string) {
     editingFlowId = flowId;
-    editingTitle = currentTitle;
+    editingFlowTitle = currentTitle;
+    // Focus the input after it renders
+    setTimeout(() => {
+      const input = document.getElementById("cloud-flow-edit-input");
+      if (input) {
+        (input as HTMLInputElement).select();
+        input.focus();
+      }
+    }, 0);
   }
 
-  async function commitRename(flowId: string) {
-    if (editingTitle.trim()) {
-      await renameCloudFlow(flowId, editingTitle.trim());
+  async function finishEditingFlow() {
+    if (editingFlowId && editingFlowTitle.trim()) {
+      await saveFlowApi(editingFlowId, undefined, editingFlowTitle.trim());
+      await refreshFlowList();
     }
     editingFlowId = null;
-    editingTitle = "";
+    editingFlowTitle = "";
   }
 
-  function cancelRename() {
-    editingFlowId = null;
-    editingTitle = "";
-  }
-
-  async function confirmDeleteCloudFlow(flowId: string, title: string) {
-    if (confirm(`Delete "${title || "Untitled"}"? This cannot be undone.`)) {
+  async function handleDeleteCloudFlow(flowId: string, title: string) {
+    if (
+      confirm(`Delete flow "${title || "Untitled"}"? This cannot be undone.`)
+    ) {
       await deleteCloudFlow(flowId);
     }
   }
@@ -435,45 +440,43 @@
             <div class="cloud-flows-section">
               <div class="section-label">Your Flows</div>
               {#each $cloudFlowList as flow}
-                <div
-                  class="cloud-flow-item"
-                  class:active={$currentCloudFlowId === flow.id}
-                  class:shared={flow.is_shared}
-                >
+                <div class="cloud-flow-item-wrapper">
                   {#if editingFlowId === flow.id}
-                    <!-- svelte-ignore a11y-autofocus -->
                     <input
-                      class="rename-input"
-                      bind:value={editingTitle}
-                      autofocus
-                      on:blur={() => commitRename(flow.id)}
+                      id="cloud-flow-edit-input"
+                      class="cloud-flow-edit-input"
+                      bind:value={editingFlowTitle}
+                      on:blur={finishEditingFlow}
                       on:keydown={(e) => {
-                        if (e.key === "Enter") commitRename(flow.id);
-                        if (e.key === "Escape") cancelRename();
+                        if (e.key === "Enter") finishEditingFlow();
+                        if (e.key === "Escape") {
+                          editingFlowId = null;
+                        }
                       }}
                     />
                   {:else}
-                    <!-- svelte-ignore a11y-click-events-have-key-events -->
-                    <!-- svelte-ignore a11y-no-static-element-interactions -->
-                    <span
-                      class="flow-title"
+                    <button
+                      class="cloud-flow-item"
+                      class:active={$currentCloudFlowId === flow.id}
+                      class:shared={flow.is_shared}
                       on:click={() => openCloudFlow(flow.id)}
                       on:dblclick|stopPropagation={() =>
-                        startRenaming(flow.id, flow.title)}
-                      >{flow.title || "Untitled"}</span
+                        startEditingFlow(flow.id, flow.title)}
                     >
-                    {#if flow.is_shared}
-                      <span class="shared-badge">shared</span>
-                    {/if}
-                    <button
-                      class="delete-cloud-flow"
-                      on:click|stopPropagation={() =>
-                        confirmDeleteCloudFlow(flow.id, flow.title)}
-                      title="Delete flow"
-                    >
-                      ×
+                      <span class="flow-title">{flow.title || "Untitled"}</span>
+                      {#if flow.is_shared}
+                        <span class="shared-badge">shared</span>
+                      {/if}
                     </button>
                   {/if}
+                  <button
+                    class="cloud-flow-delete"
+                    on:click|stopPropagation={() =>
+                      handleDeleteCloudFlow(flow.id, flow.title)}
+                    title="Delete flow"
+                  >
+                    ×
+                  </button>
                 </div>
               {/each}
             </div>
@@ -698,6 +701,42 @@
     opacity: 0.1;
     margin: 0.5rem 0;
   }
+  .cloud-flow-item-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    position: relative;
+  }
+  .cloud-flow-item-wrapper:hover .cloud-flow-delete {
+    opacity: 0.5;
+  }
+  .cloud-flow-edit-input {
+    flex: 1;
+    padding: 0.35rem 0.5rem;
+    border: 1px solid var(--accent-text);
+    border-radius: calc(var(--border-radius) * 0.4);
+    background: var(--background-accent-indent);
+    color: inherit;
+    font-family: inherit;
+    font-size: 0.85rem;
+    outline: none;
+  }
+  .cloud-flow-delete {
+    background: none;
+    border: none;
+    color: inherit;
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 0.2rem 0.4rem;
+    opacity: 0;
+    transition: opacity var(--transition-speed) ease;
+    flex-shrink: 0;
+    line-height: 1;
+  }
+  .cloud-flow-delete:hover {
+    opacity: 1 !important;
+    color: hsl(0, 60%, 55%);
+  }
   .cloud-flow-item {
     display: flex;
     align-items: center;
@@ -725,37 +764,6 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     flex: 1;
-    cursor: pointer;
-  }
-  .cloud-flow-item .delete-cloud-flow {
-    background: none;
-    border: none;
-    color: inherit;
-    opacity: 0;
-    font-size: 1.1rem;
-    line-height: 1;
-    cursor: pointer;
-    padding: 0 0.2rem;
-    flex-shrink: 0;
-    transition: opacity var(--transition-speed) ease;
-  }
-  .cloud-flow-item:hover .delete-cloud-flow {
-    opacity: 0.4;
-  }
-  .cloud-flow-item .delete-cloud-flow:hover {
-    opacity: 0.9;
-    color: hsl(0, 60%, 55%);
-  }
-  .rename-input {
-    width: 100%;
-    padding: 0.15rem 0.3rem;
-    border: 1px solid var(--accent-text);
-    border-radius: 3px;
-    background: transparent;
-    color: inherit;
-    font-family: inherit;
-    font-size: 0.85rem;
-    outline: none;
   }
   .shared-badge {
     font-size: 0.65rem;

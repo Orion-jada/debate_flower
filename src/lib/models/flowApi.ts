@@ -114,17 +114,19 @@ export async function createFlow(title: string, nodesData: Nodes): Promise<FlowR
 }
 
 /**
- * Save (upsert) flow data. Updates the nodes_data and title.
+ * Save (upsert) flow data. Updates the nodes_data and/or title.
  */
 export async function saveFlow(
     id: string,
-    nodesData: Nodes,
+    nodesData?: Nodes,
     title?: string
 ): Promise<boolean> {
     const updateObj: Record<string, unknown> = {
-        nodes_data: nodesData,
         updated_at: new Date().toISOString()
     };
+    if (nodesData !== undefined) {
+        updateObj.nodes_data = nodesData;
+    }
     if (title !== undefined) {
         updateObj.title = title;
     }
