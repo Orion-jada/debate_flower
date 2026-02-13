@@ -1,0 +1,232 @@
+{
+  ".svelte-kit/generated/server/internal.js": {
+    "file": "internal.js",
+    "name": "internal",
+    "src": ".svelte-kit/generated/server/internal.js",
+    "isEntry": true,
+    "imports": [
+      "_internal.js",
+      "_environment.js"
+    ]
+  },
+  "_Icon.js": {
+    "file": "chunks/Icon.js",
+    "name": "Icon",
+    "imports": [
+      "_ssr.js"
+    ],
+    "css": [
+      "_app/immutable/assets/Icon.B1PHJlzR.css"
+    ]
+  },
+  "_Text.svelte_svelte_type_style_lang.js": {
+    "file": "chunks/Text.svelte_svelte_type_style_lang.js",
+    "name": "Text.svelte_svelte_type_style_lang",
+    "css": [
+      "_app/immutable/assets/Text.D00dUUvx.css"
+    ]
+  },
+  "_autoSave.js": {
+    "file": "chunks/autoSave.js",
+    "name": "autoSave",
+    "imports": [
+      "_index.js",
+      "_ssr.js",
+      "_Icon.js"
+    ],
+    "css": [
+      "_app/immutable/assets/autoSave.BP2g0tC6.css"
+    ]
+  },
+  "_environment.js": {
+    "file": "chunks/environment.js",
+    "name": "environment"
+  },
+  "_exports.js": {
+    "file": "chunks/exports.js",
+    "name": "exports"
+  },
+  "_index.js": {
+    "file": "chunks/index.js",
+    "name": "index",
+    "imports": [
+      "_ssr.js"
+    ]
+  },
+  "_internal.js": {
+    "file": "chunks/internal.js",
+    "name": "internal",
+    "imports": [
+      "_ssr.js",
+      "_ssr2.js",
+      "_environment.js"
+    ]
+  },
+  "_shared.js": {
+    "file": "chunks/shared.js",
+    "name": "shared",
+    "imports": [
+      "_utils.js"
+    ]
+  },
+  "_ssr.js": {
+    "file": "chunks/ssr.js",
+    "name": "ssr"
+  },
+  "_ssr2.js": {
+    "file": "chunks/ssr2.js",
+    "name": "ssr"
+  },
+  "_utils.js": {
+    "file": "chunks/utils.js",
+    "name": "utils"
+  },
+  "node_modules/@fontsource/merriweather-sans/files/merriweather-sans-latin-300-normal.woff": {
+    "file": "_app/immutable/assets/merriweather-sans-latin-300-normal.Bhkn9rQo.woff",
+    "src": "node_modules/@fontsource/merriweather-sans/files/merriweather-sans-latin-300-normal.woff"
+  },
+  "node_modules/@fontsource/merriweather-sans/files/merriweather-sans-latin-300-normal.woff2": {
+    "file": "_app/immutable/assets/merriweather-sans-latin-300-normal.DU6Tv2Oa.woff2",
+    "src": "node_modules/@fontsource/merriweather-sans/files/merriweather-sans-latin-300-normal.woff2"
+  },
+  "node_modules/@fontsource/merriweather-sans/files/merriweather-sans-latin-700-normal.woff": {
+    "file": "_app/immutable/assets/merriweather-sans-latin-700-normal.B0hN5pI_.woff",
+    "src": "node_modules/@fontsource/merriweather-sans/files/merriweather-sans-latin-700-normal.woff"
+  },
+  "node_modules/@fontsource/merriweather-sans/files/merriweather-sans-latin-700-normal.woff2": {
+    "file": "_app/immutable/assets/merriweather-sans-latin-700-normal.D2ahPvNb.woff2",
+    "src": "node_modules/@fontsource/merriweather-sans/files/merriweather-sans-latin-700-normal.woff2"
+  },
+  "node_modules/@fontsource/merriweather-sans/files/merriweather-sans-latin-ext-300-normal.woff": {
+    "file": "_app/immutable/assets/merriweather-sans-latin-ext-300-normal.B3YjYEmu.woff",
+    "src": "node_modules/@fontsource/merriweather-sans/files/merriweather-sans-latin-ext-300-normal.woff"
+  },
+  "node_modules/@fontsource/merriweather-sans/files/merriweather-sans-latin-ext-300-normal.woff2": {
+    "file": "_app/immutable/assets/merriweather-sans-latin-ext-300-normal.BfLbN2-O.woff2",
+    "src": "node_modules/@fontsource/merriweather-sans/files/merriweather-sans-latin-ext-300-normal.woff2"
+  },
+  "node_modules/@fontsource/merriweather-sans/files/merriweather-sans-latin-ext-700-normal.woff": {
+    "file": "_app/immutable/assets/merriweather-sans-latin-ext-700-normal.DGwQlEWD.woff",
+    "src": "node_modules/@fontsource/merriweather-sans/files/merriweather-sans-latin-ext-700-normal.woff"
+  },
+  "node_modules/@fontsource/merriweather-sans/files/merriweather-sans-latin-ext-700-normal.woff2": {
+    "file": "_app/immutable/assets/merriweather-sans-latin-ext-700-normal.aV_QeKIH.woff2",
+    "src": "node_modules/@fontsource/merriweather-sans/files/merriweather-sans-latin-ext-700-normal.woff2"
+  },
+  "node_modules/@fontsource/merriweather-sans/files/merriweather-sans-vietnamese-300-normal.woff": {
+    "file": "_app/immutable/assets/merriweather-sans-vietnamese-300-normal.B1ReVXA3.woff",
+    "src": "node_modules/@fontsource/merriweather-sans/files/merriweather-sans-vietnamese-300-normal.woff"
+  },
+  "node_modules/@fontsource/merriweather-sans/files/merriweather-sans-vietnamese-300-normal.woff2": {
+    "file": "_app/immutable/assets/merriweather-sans-vietnamese-300-normal.Lo9JIVPz.woff2",
+    "src": "node_modules/@fontsource/merriweather-sans/files/merriweather-sans-vietnamese-300-normal.woff2"
+  },
+  "node_modules/@fontsource/merriweather-sans/files/merriweather-sans-vietnamese-700-normal.woff": {
+    "file": "_app/immutable/assets/merriweather-sans-vietnamese-700-normal.BBQHBIDv.woff",
+    "src": "node_modules/@fontsource/merriweather-sans/files/merriweather-sans-vietnamese-700-normal.woff"
+  },
+  "node_modules/@fontsource/merriweather-sans/files/merriweather-sans-vietnamese-700-normal.woff2": {
+    "file": "_app/immutable/assets/merriweather-sans-vietnamese-700-normal.C90QcUkg.woff2",
+    "src": "node_modules/@fontsource/merriweather-sans/files/merriweather-sans-vietnamese-700-normal.woff2"
+  },
+  "node_modules/@sveltejs/kit/src/runtime/app/server/remote/index.js": {
+    "file": "remote-entry.js",
+    "name": "remote-entry",
+    "src": "node_modules/@sveltejs/kit/src/runtime/app/server/remote/index.js",
+    "isEntry": true,
+    "imports": [
+      "_shared.js",
+      "_environment.js"
+    ]
+  },
+  "node_modules/@sveltejs/kit/src/runtime/components/svelte-4/error.svelte": {
+    "file": "entries/fallbacks/error.svelte.js",
+    "name": "entries/fallbacks/error.svelte",
+    "src": "node_modules/@sveltejs/kit/src/runtime/components/svelte-4/error.svelte",
+    "isEntry": true,
+    "imports": [
+      "_ssr.js",
+      "_exports.js",
+      "_utils.js",
+      "_ssr2.js"
+    ]
+  },
+  "node_modules/@sveltejs/kit/src/runtime/server/index.js": {
+    "file": "index.js",
+    "name": "index",
+    "src": "node_modules/@sveltejs/kit/src/runtime/server/index.js",
+    "isEntry": true,
+    "imports": [
+      "_shared.js",
+      "_environment.js",
+      "_exports.js",
+      "_utils.js",
+      "_index.js",
+      "_internal.js"
+    ]
+  },
+  "src/routes/+layout.svelte": {
+    "file": "entries/pages/_layout.svelte.js",
+    "name": "entries/pages/_layout.svelte",
+    "src": "src/routes/+layout.svelte",
+    "isEntry": true,
+    "imports": [
+      "_ssr.js",
+      "_autoSave.js",
+      "_Icon.js"
+    ],
+    "css": [
+      "_app/immutable/assets/_layout.DW6qyr0x.css"
+    ],
+    "assets": [
+      "_app/immutable/assets/merriweather-sans-vietnamese-300-normal.Lo9JIVPz.woff2",
+      "_app/immutable/assets/merriweather-sans-vietnamese-300-normal.B1ReVXA3.woff",
+      "_app/immutable/assets/merriweather-sans-latin-ext-300-normal.BfLbN2-O.woff2",
+      "_app/immutable/assets/merriweather-sans-latin-ext-300-normal.B3YjYEmu.woff",
+      "_app/immutable/assets/merriweather-sans-latin-300-normal.DU6Tv2Oa.woff2",
+      "_app/immutable/assets/merriweather-sans-latin-300-normal.Bhkn9rQo.woff",
+      "_app/immutable/assets/merriweather-sans-vietnamese-700-normal.C90QcUkg.woff2",
+      "_app/immutable/assets/merriweather-sans-vietnamese-700-normal.BBQHBIDv.woff",
+      "_app/immutable/assets/merriweather-sans-latin-ext-700-normal.aV_QeKIH.woff2",
+      "_app/immutable/assets/merriweather-sans-latin-ext-700-normal.DGwQlEWD.woff",
+      "_app/immutable/assets/merriweather-sans-latin-700-normal.D2ahPvNb.woff2",
+      "_app/immutable/assets/merriweather-sans-latin-700-normal.B0hN5pI_.woff"
+    ]
+  },
+  "src/routes/+layout.ts": {
+    "file": "entries/pages/_layout.ts.js",
+    "name": "entries/pages/_layout.ts",
+    "src": "src/routes/+layout.ts",
+    "isEntry": true
+  },
+  "src/routes/+page.svelte": {
+    "file": "entries/pages/_page.svelte.js",
+    "name": "entries/pages/_page.svelte",
+    "src": "src/routes/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_ssr.js",
+      "_Icon.js",
+      "_Text.svelte_svelte_type_style_lang.js"
+    ],
+    "css": [
+      "_app/immutable/assets/_page.BsmFE3uH.css"
+    ]
+  },
+  "src/routes/app/+page.svelte": {
+    "file": "entries/pages/app/_page.svelte.js",
+    "name": "entries/pages/app/_page.svelte",
+    "src": "src/routes/app/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_ssr.js",
+      "_autoSave.js",
+      "_Text.svelte_svelte_type_style_lang.js",
+      "_Icon.js",
+      "_index.js"
+    ],
+    "css": [
+      "_app/immutable/assets/_page.2ps9fXqE.css"
+    ]
+  }
+}
