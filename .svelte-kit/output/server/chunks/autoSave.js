@@ -1517,6 +1517,29 @@ async function saveFlow(id, nodesData, title) {
   }
   return true;
 }
+async function listFlowShares(flowId) {
+  const { data, error } = await supabase.from("flow_shares").select("*").eq("flow_id", flowId);
+  if (error) {
+    console.error("Error listing shares:", error);
+    return [];
+  }
+  const shares = data ?? [];
+  const userIds = shares.map((s) => s.shared_with).filter((id) => id != null);
+  let profileMap = {};
+  if (userIds.length > 0) {
+    const { data: profiles } = await supabase.from("profiles").select("id, email, display_name").in("id", userIds);
+    if (profiles) {
+      for (const p of profiles) {
+        profileMap[p.id] = { email: p.email, display_name: p.display_name };
+      }
+    }
+  }
+  return shares.map((s) => ({
+    ...s,
+    shared_with_email: s.shared_with ? profileMap[s.shared_with]?.email : void 0,
+    shared_with_name: s.shared_with ? profileMap[s.shared_with]?.display_name : void 0
+  }));
+}
 const CURRENT_SAVE_VERSION = 1;
 function getJson(nodes2) {
   const saveable = {
@@ -1694,9 +1717,23 @@ const replaceNodes = decorate(function(nodes2, newNodes2) {
 });
 let currentChannel = null;
 let suppressNextRemoteUpdate = false;
+const flowPresence = writable([]);
 function subscribeToFlow(flowId) {
   unsubscribeFromFlow();
-  currentChannel = supabase.channel(`flow:${flowId}`).on(
+  const user = get_store_value(currentUser);
+  const userPresence = {
+    user_id: user?.id ?? "unknown",
+    email: user?.email ?? "unknown",
+    display_name: user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split("@")[0] || "Unknown",
+    online_at: (/* @__PURE__ */ new Date()).toISOString()
+  };
+  currentChannel = supabase.channel(`flow:${flowId}`, {
+    config: {
+      presence: {
+        key: user?.id ?? "unknown"
+      }
+    }
+  }).on(
     "postgres_changes",
     {
       event: "UPDATE",
@@ -1714,12 +1751,37 @@ function subscribeToFlow(flowId) {
         replaceNodes(newNodesData);
       }
     }
-  ).subscribe();
+  ).on("presence", { event: "sync" }, () => {
+    if (!currentChannel) return;
+    const state = currentChannel.presenceState();
+    const users = [];
+    const seenIds = /* @__PURE__ */ new Set();
+    for (const key of Object.keys(state)) {
+      for (const presence of state[key]) {
+        if (!seenIds.has(presence.user_id)) {
+          seenIds.add(presence.user_id);
+          users.push({
+            user_id: presence.user_id,
+            email: presence.email,
+            display_name: presence.display_name,
+            online_at: presence.online_at
+          });
+        }
+      }
+    }
+    flowPresence.set(users);
+  }).subscribe(async (status) => {
+    if (status === "SUBSCRIBED") {
+      await currentChannel?.track(userPresence);
+    }
+  });
 }
 function unsubscribeFromFlow() {
   if (currentChannel) {
+    currentChannel.untrack();
     supabase.removeChannel(currentChannel);
     currentChannel = null;
+    flowPresence.set([]);
   }
 }
 function suppressNextUpdate() {
@@ -1857,14 +1919,17 @@ export {
   Button as B,
   savedNodesDatas as C,
   sideDocText as D,
-  saveStatus as E,
-  cloudFlowList as F,
-  currentCloudFlowId as G,
-  authLoading as H,
-  openPopup as I,
-  addNewFlow as J,
-  deleteFlow as K,
+  currentCloudFlowId as E,
+  currentUser as F,
+  flowPresence as G,
+  listFlowShares as H,
+  saveStatus as I,
+  cloudFlowList as J,
+  authLoading as K,
+  openPopup as L,
   MAX_SAVED_FLOWS as M,
+  addNewFlow as N,
+  deleteFlow as O,
   TutorialHighlight as T,
   initAuth as a,
   isChangelogVersionCurrent as b,

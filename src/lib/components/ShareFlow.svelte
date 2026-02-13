@@ -112,8 +112,6 @@
 </script>
 
 <div class="share-flow">
-	<h3>Share this Flow</h3>
-
 	{#if !$currentCloudFlowId}
 		<p class="warning">Save this flow first before sharing.</p>
 	{:else}
@@ -264,8 +262,12 @@
 		display: flex;
 		flex-direction: column;
 		gap: 1.25rem;
-		padding: 0.5rem;
-		min-width: 360px;
+		padding: calc(var(--button-size) + var(--padding) * 2) var(--padding)
+			var(--padding) var(--padding);
+		width: min(calc(100vw - var(--padding) * 2), 420px);
+		max-height: min(calc(100vh - var(--padding) * 2), 600px);
+		overflow-y: auto;
+		box-sizing: border-box;
 	}
 	h3 {
 		margin: 0;
