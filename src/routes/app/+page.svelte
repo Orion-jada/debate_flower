@@ -59,6 +59,28 @@
   } from "$lib/models/autoSave";
   import { newNodes } from "$lib/models/store";
   import { saveFlow as saveFlowApi } from "$lib/models/flowApi";
+  import { flowPresence } from "$lib/models/flowSync";
+
+  $: otherViewers = $flowPresence.filter((u) => u.user_id !== $currentUser?.id);
+
+  function getInitials(name: string): string {
+    return (
+      name
+        .split(" ")
+        .map((w) => w[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2) || "?"
+    );
+  }
+
+  function getAvatarColor(userId: string): string {
+    let hash = 0;
+    for (let i = 0; i < userId.length; i++) {
+      hash = userId.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return `hsl(${Math.abs(hash) % 360}, 55%, 50%)`;
+  }
 
   let editingFlowId: string | null = null;
   let editingFlowTitle = "";
@@ -411,8 +433,11 @@
             },
             {
               icon: "people",
-              onclick: () => openPopup(Share, "Share"),
-              tooltip: "share (p2p)",
+              onclick: () =>
+                $isLoggedIn
+                  ? openPopup(ShareFlow, "Share Flow")
+                  : openPopup(Share, "Share"),
+              tooltip: "share",
               tutorialHighlight: 4,
             },
           ]}
@@ -551,6 +576,19 @@
           <div class="box-control">
             <BoxControl flowId={$selectedFlowId} />
           </div>
+          {#if otherViewers.length > 0}
+            <div class="presence-strip">
+              {#each otherViewers as viewer}
+                <div
+                  class="viewer-avatar"
+                  style="background: {getAvatarColor(viewer.user_id)}"
+                  title="{viewer.display_name} is editing"
+                >
+                  {getInitials(viewer.display_name)}
+                </div>
+              {/each}
+            </div>
+          {/if}
           <div
             class="flow"
             class:customScrollbar={settings.data.customScrollbar.value}
@@ -582,9 +620,9 @@
     display: grid;
     gap: var(--gap);
     grid-template-areas:
-      "sidebar title box-control"
-      "sidebar flow flow";
-    grid-template-columns: var(--sidebar-width) 1fr auto;
+      "sidebar title box-control presence"
+      "sidebar flow flow flow";
+    grid-template-columns: var(--sidebar-width) 1fr auto auto;
     padding: var(--main-margin);
     width: 100%;
     height: 100%;
@@ -593,8 +631,9 @@
   }
   .grid:has(.side-doc) {
     grid-template-areas:
-      "sidebar title box-control side-doc"
-      "sidebar flow flow side-doc";
+      "sidebar title box-control presence side-doc"
+      "sidebar flow flow flow side-doc";
+    grid-template-columns: var(--sidebar-width) 1fr auto auto auto;
   }
   .grid.showPrelude {
     grid-template-areas: "sidebar prelude";
@@ -848,5 +887,33 @@
     height: 100%;
     opacity: 0.5;
     font-size: 1.1rem;
+  }
+
+  /* ─── Presence strip ─── */
+  .presence-strip {
+    display: flex;
+    align-items: center;
+    gap: -4px;
+    padding: 0 0.5rem;
+    height: var(--title-height);
+    grid-area: presence;
+  }
+  .viewer-avatar {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.6rem;
+    font-weight: bold;
+    color: white;
+    border: 2px solid var(--background);
+    margin-left: -4px;
+    cursor: default;
+    flex-shrink: 0;
+  }
+  .viewer-avatar:first-child {
+    margin-left: 0;
   }
 </style>

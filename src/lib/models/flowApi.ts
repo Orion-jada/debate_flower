@@ -26,6 +26,11 @@ export type FlowShareRecord = {
     created_at: string;
 };
 
+export type FlowShareWithProfile = FlowShareRecord & {
+    shared_with_email?: string;
+    shared_with_name?: string;
+};
+
 /**
  * List all flows the current user owns or has been shared with.
  */
@@ -218,9 +223,9 @@ export async function acceptShareInvite(token: string): Promise<FlowRecord | nul
 }
 
 /**
- * List collaborators on a flow.
+ * List collaborators on a flow, enriched with profile info.
  */
-export async function listFlowShares(flowId: string): Promise<FlowShareRecord[]> {
+export async function listFlowShares(flowId: string): Promise<FlowShareWithProfile[]> {
     const { data, error } = await supabase
         .from('flow_shares')
         .select('*')
@@ -230,7 +235,87 @@ export async function listFlowShares(flowId: string): Promise<FlowShareRecord[]>
         console.error('Error listing shares:', error);
         return [];
     }
-    return (data ?? []) as FlowShareRecord[];
+
+    const shares = (data ?? []) as FlowShareRecord[];
+
+    // Enrich with profile info
+    const userIds = shares.map((s) => s.shared_with).filter((id): id is string => id != null);
+    let profileMap: Record<string, { email: string; display_name: string }> = {};
+
+    if (userIds.length > 0) {
+        const { data: profiles } = await supabase
+            .from('profiles')
+            .select('id, email, display_name')
+            .in('id', userIds);
+
+        if (profiles) {
+            for (const p of profiles) {
+                profileMap[p.id] = { email: p.email, display_name: p.display_name };
+            }
+        }
+    }
+
+    return shares.map((s) => ({
+        ...s,
+        shared_with_email: s.shared_with ? profileMap[s.shared_with]?.email : undefined,
+        shared_with_name: s.shared_with ? profileMap[s.shared_with]?.display_name : undefined
+    }));
+}
+
+/**
+ * Share a flow directly by email.
+ */
+export async function shareFlowByEmail(
+    flowId: string,
+    email: string,
+    permission: 'view' | 'edit' = 'edit'
+): Promise<{ success: boolean; error?: string }> {
+    const user = get(currentUser);
+    if (!user) return { success: false, error: 'Not logged in' };
+
+    const { data, error: rpcError } = await supabase.rpc('find_user_by_email', {
+        lookup_email: email.trim().toLowerCase()
+    });
+
+    if (rpcError) {
+        console.error('Error looking up user:', rpcError);
+        return { success: false, error: 'Failed to look up user' };
+    }
+
+    if (!data || data.length === 0) {
+        return { success: false, error: 'No user found with that email' };
+    }
+
+    const targetUserId = data[0].user_id;
+
+    if (targetUserId === user.id) {
+        return { success: false, error: "You can't share with yourself" };
+    }
+
+    const { data: existing } = await supabase
+        .from('flow_shares')
+        .select('id')
+        .eq('flow_id', flowId)
+        .eq('shared_with', targetUserId)
+        .maybeSingle();
+
+    if (existing) {
+        return { success: false, error: 'Flow is already shared with this user' };
+    }
+
+    const { error: insertError } = await supabase.from('flow_shares').insert({
+        flow_id: flowId,
+        shared_by: user.id,
+        shared_with: targetUserId,
+        permission
+    });
+
+    if (insertError) {
+        console.error('Error sharing flow:', insertError);
+        return { success: false, error: 'Failed to share flow' };
+    }
+
+    return { success: true };
 }
 
 /**
