@@ -460,8 +460,6 @@
                       class:active={$currentCloudFlowId === flow.id}
                       class:shared={flow.is_shared}
                       on:click={() => openCloudFlow(flow.id)}
-                      on:dblclick|stopPropagation={() =>
-                        startEditingFlow(flow.id, flow.title)}
                     >
                       <span class="flow-title">{flow.title || "Untitled"}</span>
                       {#if flow.is_shared}
@@ -470,7 +468,15 @@
                     </button>
                   {/if}
                   <button
-                    class="cloud-flow-delete"
+                    class="cloud-flow-action cloud-flow-edit"
+                    on:click|stopPropagation={() =>
+                      startEditingFlow(flow.id, flow.title)}
+                    title="Rename flow"
+                  >
+                    ✎
+                  </button>
+                  <button
+                    class="cloud-flow-action cloud-flow-delete"
                     on:click|stopPropagation={() =>
                       handleDeleteCloudFlow(flow.id, flow.title)}
                     title="Delete flow"
@@ -707,9 +713,7 @@
     gap: 0;
     position: relative;
   }
-  .cloud-flow-item-wrapper:hover .cloud-flow-delete {
-    opacity: 0.5;
-  }
+
   .cloud-flow-edit-input {
     flex: 1;
     padding: 0.35rem 0.5rem;
@@ -721,21 +725,29 @@
     font-size: 0.85rem;
     outline: none;
   }
-  .cloud-flow-delete {
+  .cloud-flow-action {
     background: none;
     border: none;
     color: inherit;
-    font-size: 1.1rem;
+    font-size: 1rem;
     cursor: pointer;
-    padding: 0.2rem 0.4rem;
+    padding: 0.15rem 0.3rem;
     opacity: 0;
     transition: opacity var(--transition-speed) ease;
     flex-shrink: 0;
     line-height: 1;
   }
-  .cloud-flow-delete:hover {
+  .cloud-flow-item-wrapper:hover .cloud-flow-action {
+    opacity: 0.45;
+  }
+  .cloud-flow-action:hover {
     opacity: 1 !important;
+  }
+  .cloud-flow-delete:hover {
     color: hsl(0, 60%, 55%);
+  }
+  .cloud-flow-edit:hover {
+    color: var(--accent-text);
   }
   .cloud-flow-item {
     display: flex;
